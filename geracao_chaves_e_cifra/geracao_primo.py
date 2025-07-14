@@ -12,6 +12,17 @@ first_primes_list = [
     227, 229, 233, 239, 241, 251, 257,
     263, 269, 271, 277, 281, 283, 293,
    ]
+
+# Geracao:
+def geracao_num_primo(num_bits):
+    while True:
+        random_n_bit_number = nBitRandom(num_bits)
+        lowLevelPrimality_result = lowPrimes_primalityTest(random_n_bit_number)
+        if lowLevelPrimality_result:
+            prime_number_result = millerRabin_primalityTest(random_n_bit_number)
+            if prime_number_result: 
+                return random_n_bit_number    
+            
 # objetivo: chave de 2048 bits.
 # Para implementacao no projeto, escolheremos 2 numeros primos de 1024 bits.
 # Para isso escolheremos um numero entre:
@@ -38,24 +49,7 @@ def lowPrimes_primalityTest(num):
 
 # Miller Rabin
 # teste deterministico para saber se um numero e primo ou não
-def trialComposite(a, k, m, num):
-            
-    # terceira etapa:
-    # calcular b0 = a**m (mod num)
-    # para b0: se b0 == 1 ou -1, num provavelmente primo
-    # se b0 != 1 ou -1: calcular: b1 = b0**2 mod(num), e assim por diante
-    # para b1,b2,..,bn: 1->composto, -1->primo 
-        result = pow(a, m, num) # pow(base, expoente, modulo)
-        if result == 1 or result == num - 1:
-            return True
-        else:
-            for _ in range(k - 1):
-                result = pow(result, 2, num)
-                if result == 1:
-                    return False
-                elif result == num - 1:
-                    return True
-            return False    
+
 def millerRabin_primalityTest(num):
 # primeira etapa:
 # descobrir k e m em: num-1 = 2**k * m
@@ -75,19 +69,22 @@ def millerRabin_primalityTest(num):
         a = random.randrange(2, num - 1)
         if not (trialComposite(a, k, m, num)):
             return False
-    return True
-
-
-# Geracao:
-def geracao_num_primo(num_bits):
-    while True:
-        random_n_bit_number = nBitRandom(num_bits)
-        lowLevelPrimality_result = lowPrimes_primalityTest(random_n_bit_number)
-        if lowLevelPrimality_result:
-            prime_number_result = millerRabin_primalityTest(random_n_bit_number)
-            if prime_number_result: 
-                return random_n_bit_number    
-    
-
-
-            
+    return True   
+         
+def trialComposite(a, k, m, num):
+    # terceira etapa:
+    # calcular b0 = a**m (mod num)
+    # para b0: se b0 == 1 ou -1, num provavelmente primo
+    # se b0 != 1 ou -1: calcular: b1 = b0**2 mod(num), e assim por diante
+    # para b1,b2,..,bn: 1->composto, -1->primo 
+        result = pow(a, m, num) # pow(base, expoente, modulo)
+        if result == 1 or result == num - 1:
+            return True
+        else:
+            for _ in range(k - 1):
+                result = pow(result, 2, num)
+                if result == 1:
+                    return False
+                elif result == num - 1:
+                    return True
+            return False    
