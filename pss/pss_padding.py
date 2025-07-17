@@ -1,10 +1,10 @@
 import hashlib
 import os
 
-def cria_EM(hash):
+def cria_EM(hash: bytes) -> bytes:
     # hash da mensagem: 32 bytes
-    Hm = hash
-    hLen = len(Hm[1]) # 32 bytes
+    hased_message = hash
+    hLen = len(hased_message) # 32 bytes
     
     # gerar salt: mesmo tamanho do hash: 32 bytes
     Salt = salt(hLen)
@@ -14,19 +14,18 @@ def cria_EM(hash):
     psLen = 189 # 256 - 1 - 1 - 1 - 32 - 32   
   
     # Crie a semente para MGF1: mgf_seed = H(M) || Salt.
-    seed = Hm[1] + Salt
+    seed = hased_message + Salt
     ps = mgf(seed, psLen)    
-    print("Len PS:", len(ps))
+    # print("Len PS:", len(ps))
 
-    EM = b'\x00' + b'\x01' + ps + b'\x00' + Hm[1] + Salt
-    print(EM)
+    EM = b'\x00' + b'\x01' + ps + b'\x00' + hased_message + Salt
+    # print(EM)
     return EM
 
-def salt(num_bytes):
+def salt(num_bytes: int) -> bytes:
     return os.urandom(32) # num_bytes ja definidos para facilitacao do projeto
 
-
-def mgf(mgf_seed, len_ps):
+def mgf(mgf_seed: bytes, len_ps: int) -> bytes:
     ps = b''
     i = 0
     # Iteracao para gerar os blocos do PS:

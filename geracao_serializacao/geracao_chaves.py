@@ -1,9 +1,10 @@
 import random
-from geracao_primo import geracao_num_primo
+from geracao_serializacao.geracao_primo import geracao_num_primo
+from utils.utils_geracoes import get_mdc
 
 BITS_CHAVE = 1024
 
-def geracao_chaves_rsa(num_bits):
+def geracao_chaves_rsa(num_bits: int) -> tuple[tuple[int, int], tuple[int, int]]:
     # definir p e q
     p = geracao_num_primo(num_bits)
     q = geracao_num_primo(num_bits)
@@ -23,11 +24,12 @@ def geracao_chaves_rsa(num_bits):
     return ((e, n), (d, n))
 
 # importante destacar o porque dessa escolha
-def get_expoente_publico(k):
-
+def get_expoente_publico(phi_n: int):
+    
+    # Codigo para definir um "e" aleatorio
     # while True:
-    #     e = random.randrange(2, k)
-    #     mdc = get_mdc(e, k)
+    #     e = random.randrange(2, phi_n)
+    #     mdc = get_mdc(e, phi_n)
     #     if mdc == 1:
     #         return e
 
@@ -36,16 +38,7 @@ def get_expoente_publico(k):
     # seguro
     return 65537 
         
-def get_expoente_privado(k, e):
-    d = pow(e, -1, k)
-    return d
+def get_expoente_privado(phi_n: int, expoente_pub: int) -> int:
+    expoente_priv = pow(expoente_pub, -1, phi_n)
+    return expoente_priv
 
-def get_primos(num_bits):
-    first = geracao_num_primo(num_bits)
-    second = geracao_num_primo(num_bits)
-    return (first, second)
-
-def get_mdc(a, b):
-    while b:
-        a, b = b, a % b
-    return a
