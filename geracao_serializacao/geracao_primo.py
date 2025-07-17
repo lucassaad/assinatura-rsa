@@ -1,4 +1,5 @@
 import random
+from utils.utils_geracoes import nBitRandom
 
 
 NUMBER_OF_RABIN_ROUNDS = 40
@@ -14,7 +15,7 @@ first_primes_list = [
    ]
 
 # Geracao:
-def geracao_num_primo(num_bits):
+def geracao_num_primo(num_bits: int) -> int:
     while True:
         random_n_bit_number = nBitRandom(num_bits)
         lowLevelPrimality_result = lowPrimes_primalityTest(random_n_bit_number)
@@ -22,26 +23,11 @@ def geracao_num_primo(num_bits):
             prime_number_result = millerRabin_primalityTest(random_n_bit_number)
             if prime_number_result: 
                 return random_n_bit_number    
-            
-# objetivo: chave de 2048 bits.
-# Para implementacao no projeto, escolheremos 2 numeros primos de 1024 bits.
-# Para isso escolheremos um numero entre:
-#     - (2**1024) - 1: maior numero com 1024 bits
-#     - (2**1023) + 1: menor numero com 1024 bits
-def nBitRandom(num_bits):
-    max_n_bit_num = 2**(num_bits) - 1
-    min_n_bit_num = 2**(num_bits-1) + 1
-
-    result = (random.randrange(min_n_bit_num, max_n_bit_num + 1))
-    if result % 2 == 0:
-        result += 1
-
-    return result
 
 # Primeiro teste de primalidade:
 # dividir pelos primeiros numeros primos 
 # importancia: elimina previamente numeros compostos faceis de reconhecer
-def lowPrimes_primalityTest(num):
+def lowPrimes_primalityTest(num: int) -> bool:
     for divisor in first_primes_list:
         if num % divisor == 0:
             return False
@@ -50,7 +36,7 @@ def lowPrimes_primalityTest(num):
 # Miller Rabin
 # teste deterministico para saber se um numero e primo ou não
 
-def millerRabin_primalityTest(num):
+def millerRabin_primalityTest(num: int) -> bool:
 # primeira etapa:
 # descobrir k e m em: num-1 = 2**k * m
 
@@ -67,24 +53,24 @@ def millerRabin_primalityTest(num):
     # escolher um numero "a", tal que
     # 1 < a < num
         a = random.randrange(2, num - 1)
-        if not (trialComposite(a, k, m, num)):
+        if (trialComposite(a, k, m, num)):
             return False
     return True   
          
-def trialComposite(a, k, m, num):
+def trialComposite(base:int, k: int, expoente: int, num: int) -> bool:
     # terceira etapa:
     # calcular b0 = a**m (mod num)
     # para b0: se b0 == 1 ou -1, num provavelmente primo
     # se b0 != 1 ou -1: calcular: b1 = b0**2 mod(num), e assim por diante
     # para b1,b2,..,bn: 1->composto, -1->primo 
-        result = pow(a, m, num) # pow(base, expoente, modulo)
+        result = pow(base, expoente, num) # pow(base, expoente, modulo)
         if result == 1 or result == num - 1:
-            return True
+            return False
         else:
             for _ in range(k - 1):
                 result = pow(result, 2, num)
                 if result == 1:
-                    return False
-                elif result == num - 1:
                     return True
-            return False    
+                elif result == num - 1:
+                    return False
+            return True    
