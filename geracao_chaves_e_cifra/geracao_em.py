@@ -16,10 +16,10 @@ def cria_EM(hash):
     # Crie a semente para MGF1: mgf_seed = H(M) || Salt.
     seed = Hm[1] + Salt
     ps = mgf(seed, psLen)    
-    print("Len PS:", len(ps))
+    # print("Len PS:", len(ps))
 
     EM = b'\x00' + b'\x01' + ps + b'\x00' + Hm[1] + Salt
-    print(EM)
+    # print(EM)
     return EM
 
 def salt(num_bytes):
